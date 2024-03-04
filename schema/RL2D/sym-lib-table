@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "RL2D")(type "KiCad")(uri "${KIPRJMOD}/libs/RL2D.kicad_sym")(options "")(descr ""))
+)
