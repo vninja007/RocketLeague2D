@@ -1128,7 +1128,7 @@
   (symbol (lib_id "power:VDC") (at 35.56 100.33 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 577020f8-ca75-4017-b6c9-642bdab2ee0b)
-    (property "Reference" "#PWR?" (id 0) (at 38.1 100.33 0)
+    (property "Reference" "#PWR0113" (id 0) (at 38.1 100.33 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VDC" (id 1) (at 31.75 100.3299 90)
@@ -1220,7 +1220,7 @@
     (property "Value" "ESP32_WROOM-32" (id 1) (at 170.18 101.6 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 161.29 71.12 0)
+    (property "Footprint" "RL2D:ESP32" (id 2) (at 161.29 71.12 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 161.29 71.12 0)
@@ -1236,8 +1236,8 @@
     (pin "17" (uuid db3ac19a-a4e1-4a5b-afab-134d978a2873))
     (pin "18" (uuid d6403fb3-3143-4aa8-a757-2906582531aa))
     (pin "19" (uuid 7b211564-a40e-410d-a2f0-8d1610c2ab08))
-    (pin "2" (uuid 708902f3-1f97-42ae-9ed2-93f185a7a240))
-    (pin "2" (uuid 708902f3-1f97-42ae-9ed2-93f185a7a240))
+    (pin "2" (uuid 708902f3-1f97-42ae-9ed2-93f185a7a242))
+    (pin "2" (uuid 708902f3-1f97-42ae-9ed2-93f185a7a242))
     (pin "20" (uuid a699f82c-53a7-4b6e-a4c1-0afc7048e86b))
     (pin "21" (uuid c41a38ea-5287-49d1-bc7b-84c8b322b131))
     (pin "22" (uuid b29b318d-a3b8-4a56-b5ce-806d80a855ab))
@@ -1285,7 +1285,7 @@
   (symbol (lib_id "power:VDC") (at 160.02 43.18 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 974c2d76-5b7f-45d4-a32a-7d0d8b0e4963)
-    (property "Reference" "#PWR?" (id 0) (at 160.02 45.72 0)
+    (property "Reference" "#PWR0103" (id 0) (at 160.02 45.72 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VDC" (id 1) (at 154.94 41.91 0)
@@ -1379,7 +1379,7 @@
     (property "Value" "ILI9341 2.8\" TFT LCD" (id 1) (at 103.6194 19.05 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 101.6 52.07 0)
+    (property "Footprint" "RL2D:ILI9341 2.8inch" (id 2) (at 101.6 52.07 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" " " (id 3) (at 120.65 15.24 0)
@@ -1408,7 +1408,7 @@
   (symbol (lib_id "power:+3V3") (at 162.56 43.18 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid b965cb9e-8dec-46f9-8838-25676e9a9e1f)
-    (property "Reference" "#PWR?" (id 0) (at 162.56 46.99 0)
+    (property "Reference" "#PWR0104" (id 0) (at 162.56 46.99 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (id 1) (at 166.37 41.91 0))
@@ -1441,7 +1441,7 @@
     (uuid fc74fec6-8899-4958-bb73-6ceed471866c)
     (property "Reference" "BT1" (id 0) (at 40.259 92.71 90))
     (property "Value" "9V Battery" (id 1) (at 40.259 95.25 90))
-    (property "Footprint" "" (id 2) (at 39.116 100.33 90)
+    (property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical" (id 2) (at 39.116 100.33 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 39.116 100.33 90)
@@ -1461,6 +1461,12 @@
     )
     (path "/81fa8680-62eb-404a-8f02-033853e7108b"
       (reference "#PWR0102") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/974c2d76-5b7f-45d4-a32a-7d0d8b0e4963"
+      (reference "#PWR0103") (unit 1) (value "VDC") (footprint "")
+    )
+    (path "/b965cb9e-8dec-46f9-8838-25676e9a9e1f"
+      (reference "#PWR0104") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/32a94fa4-9414-4f8e-a7b5-2450b6790f48"
       (reference "#PWR0105") (unit 1) (value "GND") (footprint "")
@@ -1487,22 +1493,16 @@
       (reference "#PWR0112") (unit 1) (value "GND") (footprint "")
     )
     (path "/577020f8-ca75-4017-b6c9-642bdab2ee0b"
-      (reference "#PWR?") (unit 1) (value "VDC") (footprint "")
-    )
-    (path "/974c2d76-5b7f-45d4-a32a-7d0d8b0e4963"
-      (reference "#PWR?") (unit 1) (value "VDC") (footprint "")
-    )
-    (path "/b965cb9e-8dec-46f9-8838-25676e9a9e1f"
-      (reference "#PWR?") (unit 1) (value "+3V3") (footprint "")
+      (reference "#PWR0113") (unit 1) (value "VDC") (footprint "")
     )
     (path "/fc74fec6-8899-4958-bb73-6ceed471866c"
-      (reference "BT1") (unit 1) (value "9V Battery") (footprint "")
+      (reference "BT1") (unit 1) (value "9V Battery") (footprint "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical")
     )
     (path "/286ef0bb-63a2-4d30-a3f5-1f8488cb0b27"
       (reference "J1") (unit 1) (value "Steer_Joystick") (footprint "RL2D:Joystick")
     )
     (path "/7a1fca65-8bdf-43b8-a702-3dfe016059c4"
-      (reference "MCU1") (unit 1) (value "ESP32_WROOM-32") (footprint "")
+      (reference "MCU1") (unit 1) (value "ESP32_WROOM-32") (footprint "RL2D:ESP32")
     )
     (path "/d85fdf4c-f3d7-4afa-83cb-40a0d4935c82"
       (reference "R1") (unit 1) (value "330Ω") (footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
@@ -1520,7 +1520,7 @@
       (reference "SW4") (unit 1) (value "SW_On") (footprint "RL2D:Switch")
     )
     (path "/b7d46f5e-940d-4585-8638-f880da0f1ff6"
-      (reference "U1") (unit 1) (value "ILI9341 2.8\" TFT LCD") (footprint "")
+      (reference "U1") (unit 1) (value "ILI9341 2.8\" TFT LCD") (footprint "RL2D:ILI9341 2.8inch")
     )
   )
 )
