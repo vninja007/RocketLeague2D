@@ -19,9 +19,11 @@
 #define H 50
 #define sp 8
 #define ballr 10
+#define goalh 80
+#define goalw 3
 #define mycolor 0x555F
 #define ballcolor 0xFFFF
-#define opcolor 0xFE8E
+#define opcolor 0xFD40
 TFT_eSPI tft = TFT_eSPI();
 
 unsigned long total = 0;
@@ -90,12 +92,52 @@ float theta = 0;
   int cy = 260;
   int bx = 120;
   int by = 160;
-  float bvx = 3;
-  float bvy = 3;
+  float bvx = 0;
+  float bvy = 0;
+  int myscore = 0;
+  int opscore = 0;
   
   boolean ctimeout = true;
   float friction = 0.1;
 void loop(void) {
+  if(digitalRead(4)==0){
+     theta = 0;
+     drift = 3*3.14159/2;
+     cx = 120;
+     cy = 260;
+  }
+
+  //goal
+  if(by <= ballr+1 and bx > 120-goalh/2 and bx<120+goalh/2){
+     theta = 0;
+     drift = 3*3.14159/2;
+     cx = 120;
+     cy = 260;
+     bx = 120;
+     by = 160;
+     bvx = 0;
+     bvy = 0;
+     myscore += 1;
+  }
+
+  //owngoal
+  if(by >= 320-ballr-1 and bx > 120-goalh/2 and bx<120+goalh/2){
+     theta = 0;
+     drift = 3*3.14159/2;
+     cx = 120;
+     cy = 260;
+     bx = 120;
+     by = 160;
+     bvx = 0;
+     bvy = 0;
+     opscore += 1;
+  }
+
+  
+  
+
+  
+  
   tft.fillScreen(TFT_BLACK);
   int xa = analogRead(34)/40;
   int ya = analogRead(35)/40;
@@ -105,6 +147,10 @@ void loop(void) {
   Serial.print(cy);
   Serial.print(" ");
   Serial.print(digitalRead(0));
+  Serial.print(" ");
+  Serial.print(digitalRead(4));
+  Serial.print(" ");
+  Serial.print(myscore-opscore);
   Serial.print(" ");
   Serial.print(theta);
   Serial.print(" ");
@@ -130,10 +176,6 @@ void loop(void) {
   float dd = distPL(c3x, c3y, c4x, c4y, bx, by);
   float ld = distPL(c4x, c4y, c1x, c1y, bx, by);
 
-  tft.drawLine(c1x, c1y, c2x, c2y, TFT_GREEN);
-  tft.drawLine(c2x, c2y, c3x, c3y, TFT_GREEN);
-  tft.drawLine(c3x, c3y, c4x, c4y, TFT_GREEN);
-  tft.drawLine(c4x, c4y, c1x, c1y, TFT_GREEN);
   
 
   Serial.print(ld);
@@ -146,6 +188,7 @@ void loop(void) {
   Serial.print("\t\t");
   
   drift += (theta+6.17)/20;
+
 
   int accel = (1-digitalRead(0))*sp;
   cx -= accel*cos(drift);
@@ -172,6 +215,8 @@ void loop(void) {
   else if (ud > ballr+7 && ld > ballr+7 && dd>ballr+7 && rd>ballr+7){
     ctimeout = true;
   }
+
+  
   
   bvx *= (1-friction);
   bvy *= (1-friction);
@@ -190,11 +235,22 @@ void loop(void) {
     bvx += 2.5*xway;
     bvx += 2.5*yway;
   }
+
+  tft.setCursor(10,10);
+  tft.print(opscore);
+  tft.setCursor(10,310);
+  tft.print(myscore);
+
+  tft.fillRect(120-goalh/2 ,320-goalw, goalh, goalw, mycolor);
+  tft.fillRect(120-goalh/2 ,0, goalh, goalw, opcolor);
+  
   
   tft.fillCircle(bx,by,ballr, ballcolor);
   tft.fillTriangle(c1x, c1y, c2x, c2y, c3x, c3y, mycolor);
   tft.fillTriangle(c3x, c3y, c4x, c4y, c1x, c1y, mycolor);
   delay(frame);
+
+  
 }
 
 /***************************************************
