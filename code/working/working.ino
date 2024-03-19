@@ -14,10 +14,14 @@
 
 #include "SPI.h"
 #include "TFT_eSPI.h"
-#define FPS 30
+#define FPS 24
 #define W 25
 #define H 50
 #define sp 8
+#define ballr 10
+#define mycolor 0x555F
+#define ballcolor 0xFFFF
+#define opcolor 0xFE8E
 TFT_eSPI tft = TFT_eSPI();
 
 unsigned long total = 0;
@@ -45,10 +49,49 @@ void setup() {
 
   yield(); Serial.println(F("Benchmark                Time (microseconds)"));
 }
-float theta = 0.0;
-  float drift = 0;
+
+
+float distPL(int x1, int y1, int x2, int y2, int xp, int yp){
+  float A = xp-x1;
+  float B = yp-y1;
+  float C = x2-x1;
+  float D = y2-y1;
+
+  float dp = A*C+B*D;
+  float lensq = C*C+D*D;
+  float param = -1;
+  if(lensq!=0){
+    param = dp/lensq;
+  }
+  float xx = -999.0;
+  float yy = -999.0;
+  if(param < 0){
+    xx = x1;
+    yy = y1;
+  }
+  else if (param > 1){
+    xx = x2;
+    yy = y2;
+  }
+  else{
+    xx = x1 + param *C;
+    yy = y1 + param *D;
+  }
+  float dx = xp-xx;
+  float dy = yp-yy;
+  return sqrt(dx*dx+dy*dy);
+}
+
+
+
+float theta = 0;
+  float drift = 3*3.14159/2;
   int cx = 120;
-  int cy = 160;
+  int cy = 260;
+  int bx = 120;
+  int by = 160;
+  int bvx = 3;
+  int bvy = 3;
 void loop(void) {
   tft.fillScreen(TFT_BLACK);
   int xa = analogRead(34)/40;
@@ -62,8 +105,8 @@ void loop(void) {
   Serial.print(" ");
   Serial.print(theta);
   Serial.print(" ");
-  Serial.println(drift);
-  tft.fillRect(xa,ya,xa+20,ya+20,TFT_GREEN);
+  Serial.print(drift);
+  Serial.print("\t\t\t");
 
 
   float os = atan((W+0.0)/H);
@@ -78,261 +121,44 @@ void loop(void) {
   int c4x = cx-R*cos(drift-os+3.14159);
   int c4y = cy+R*sin(drift-os+3.14159);
 
+  
+  float ud = distPL(c1x, c1y, c2x, c2y, bx, by);
+  float rd = distPL(c2x, c2y, c3x, c3y, bx, by);
+  float dd = distPL(c3x, c3y, c4x, c4y, bx, by);
+  float ld = distPL(c4x, c4y, c1x, c1y, bx, by);
+
+  tft.drawLine(c1x, c1y, c2x, c2y, TFT_GREEN);
+  tft.drawLine(c2x, c2y, c3x, c3y, TFT_GREEN);
+  tft.drawLine(c3x, c3y, c4x, c4y, TFT_GREEN);
+  tft.drawLine(c4x, c4y, c1x, c1y, TFT_GREEN);
+  
+
+  Serial.print(ld);
+  Serial.print(" ");
+  Serial.print(ud);
+  Serial.print(" ");
+  Serial.print(rd);
+  Serial.print(" ");
+  Serial.println(dd);
+  
   drift += (theta+6.17)/20;
 
   int accel = (1-digitalRead(0))*sp;
   cx -= accel*cos(drift);
   cy += accel*sin(drift);
+  bx += bvx;
+  by += bvy;
+
+  if(bx > 240 || bx<0){ bvx *= -1;}
+  if(by > 320 || by<0){ bvy *= -1;}
+  
  
   
   
-  
-  tft.fillTriangle(c1x, c1y, c2x, c2y, c3x, c3y, TFT_BLUE);
-  tft.fillTriangle(c3x, c3y, c4x, c4y, c1x, c1y, TFT_BLUE);
+  tft.fillCircle(bx,by,ballr, ballcolor);
+  tft.fillTriangle(c1x, c1y, c2x, c2y, c3x, c3y, mycolor);
+  tft.fillTriangle(c3x, c3y, c4x, c4y, c1x, c1y, mycolor);
   delay(frame);
-}
-
-
-unsigned long testFillScreen() {
-  unsigned long start = micros();
-  tft.fillScreen(TFT_BLACK);
-  tft.fillScreen(TFT_RED);
-  tft.fillScreen(TFT_GREEN);
-  tft.fillScreen(TFT_BLUE);
-  tft.fillScreen(TFT_BLACK);
-  return micros() - start;
-}
-
-unsigned long testText() {
-  tft.fillScreen(TFT_BLACK);
-  unsigned long start = micros();
-  tft.setCursor(0, 0);
-  tft.setTextColor(TFT_WHITE);  tft.setTextSize(1);
-  tft.println("Hello World!");
-  tft.setTextColor(TFT_YELLOW); tft.setTextSize(2);
-  tft.println(1234.56);
-  tft.setTextColor(TFT_RED);    tft.setTextSize(3);
-  tft.println(0xDEADBEEF, HEX);
-  tft.println();
-  tft.setTextColor(TFT_GREEN);
-  tft.setTextSize(5);
-  tft.println("Groop");
-  tft.setTextSize(2);
-  tft.println("I implore thee,");
-  //tft.setTextColor(TFT_GREEN,TFT_BLACK);
-  tft.setTextSize(1);
-  tft.println("my foonting turlingdromes.");
-  tft.println("And hooptiously drangle me");
-  tft.println("with crinkly bindlewurdles,");
-  tft.println("Or I will rend thee");
-  tft.println("in the gobberwarts");
-  tft.println("with my blurglecruncheon,");
-  tft.println("see if I don't!");
-  return micros() - start;
-}
-
-unsigned long testLines(uint16_t color) {
-  unsigned long start, t;
-  int           x1, y1, x2, y2,
-                w = tft.width(),
-                h = tft.height();
-
-  tft.fillScreen(TFT_BLACK);
-
-  x1 = y1 = 0;
-  y2    = h - 1;
-  start = micros();
-  for (x2 = 0; x2 < w; x2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  x2    = w - 1;
-  for (y2 = 0; y2 < h; y2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  t     = micros() - start; // fillScreen doesn't count against timing
-
-  tft.fillScreen(TFT_BLACK);
-
-  x1    = w - 1;
-  y1    = 0;
-  y2    = h - 1;
-  start = micros();
-  for (x2 = 0; x2 < w; x2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  x2    = 0;
-  for (y2 = 0; y2 < h; y2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  t    += micros() - start;
-
-  tft.fillScreen(TFT_BLACK);
-
-  x1    = 0;
-  y1    = h - 1;
-  y2    = 0;
-  start = micros();
-  for (x2 = 0; x2 < w; x2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  x2    = w - 1;
-  for (y2 = 0; y2 < h; y2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  t    += micros() - start;
-
-  tft.fillScreen(TFT_BLACK);
-
-  x1    = w - 1;
-  y1    = h - 1;
-  y2    = 0;
-  start = micros();
-  for (x2 = 0; x2 < w; x2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-  x2    = 0;
-  for (y2 = 0; y2 < h; y2 += 6) tft.drawLine(x1, y1, x2, y2, color);
-
-  return micros() - start;
-}
-
-unsigned long testFastLines(uint16_t color1, uint16_t color2) {
-  unsigned long start;
-  int           x, y, w = tft.width(), h = tft.height();
-
-  tft.fillScreen(TFT_BLACK);
-  start = micros();
-  for (y = 0; y < h; y += 5) tft.drawFastHLine(0, y, w, color1);
-  for (x = 0; x < w; x += 5) tft.drawFastVLine(x, 0, h, color2);
-
-  return micros() - start;
-}
-
-unsigned long testRects(uint16_t color) {
-  unsigned long start;
-  int           n, i, i2,
-                cx = tft.width()  / 2,
-                cy = tft.height() / 2;
-
-  tft.fillScreen(TFT_BLACK);
-  n     = min(tft.width(), tft.height());
-  start = micros();
-  for (i = 2; i < n; i += 6) {
-    i2 = i / 2;
-    tft.drawRect(cx - i2, cy - i2, i, i, color);
-  }
-
-  return micros() - start;
-}
-
-unsigned long testFilledRects(uint16_t color1, uint16_t color2) {
-  unsigned long start, t = 0;
-  int           n, i, i2,
-                cx = tft.width()  / 2 - 1,
-                cy = tft.height() / 2 - 1;
-
-  tft.fillScreen(TFT_BLACK);
-  n = min(tft.width(), tft.height());
-  for (i = n - 1; i > 0; i -= 6) {
-    i2    = i / 2;
-    start = micros();
-    tft.fillRect(cx - i2, cy - i2, i, i, color1);
-    t    += micros() - start;
-    // Outlines are not included in timing results
-    tft.drawRect(cx - i2, cy - i2, i, i, color2);
-  }
-
-  return t;
-}
-
-unsigned long testFilledCircles(uint8_t radius, uint16_t color) {
-  unsigned long start;
-  int x, y, w = tft.width(), h = tft.height(), r2 = radius * 2;
-
-  tft.fillScreen(TFT_BLACK);
-  start = micros();
-  for (x = radius; x < w; x += r2) {
-    for (y = radius; y < h; y += r2) {
-      tft.fillCircle(x, y, radius, color);
-    }
-  }
-
-  return micros() - start;
-}
-
-unsigned long testCircles(uint8_t radius, uint16_t color) {
-  unsigned long start;
-  int           x, y, r2 = radius * 2,
-                      w = tft.width()  + radius,
-                      h = tft.height() + radius;
-
-  // Screen is not cleared for this one -- this is
-  // intentional and does not affect the reported time.
-  start = micros();
-  for (x = 0; x < w; x += r2) {
-    for (y = 0; y < h; y += r2) {
-      tft.drawCircle(x, y, radius, color);
-    }
-  }
-
-  return micros() - start;
-}
-
-unsigned long testTriangles() {
-  unsigned long start;
-  int           n, i, cx = tft.width()  / 2 - 1,
-                      cy = tft.height() / 2 - 1;
-
-  tft.fillScreen(TFT_BLACK);
-  n     = min(cx, cy);
-  start = micros();
-  for (i = 0; i < n; i += 5) {
-    tft.drawTriangle(
-      cx    , cy - i, // peak
-      cx - i, cy + i, // bottom left
-      cx + i, cy + i, // bottom right
-      tft.color565(0, 0, i));
-  }
-
-  return micros() - start;
-}
-
-unsigned long testFilledTriangles() {
-  unsigned long start, t = 0;
-  int           i, cx = tft.width()  / 2 - 1,
-                   cy = tft.height() / 2 - 1;
-
-  tft.fillScreen(TFT_BLACK);
-  start = micros();
-  for (i = min(cx, cy); i > 10; i -= 5) {
-    start = micros();
-    tft.fillTriangle(cx, cy - i, cx - i, cy + i, cx + i, cy + i,
-                     tft.color565(0, i, i));
-    t += micros() - start;
-    tft.drawTriangle(cx, cy - i, cx - i, cy + i, cx + i, cy + i,
-                     tft.color565(i, i, 0));
-  }
-
-  return t;
-}
-
-unsigned long testRoundRects() {
-  unsigned long start;
-  int           w, i, i2,
-                cx = tft.width()  / 2 - 1,
-                cy = tft.height() / 2 - 1;
-
-  tft.fillScreen(TFT_BLACK);
-  w     = min(tft.width(), tft.height());
-  start = micros();
-  for (i = 0; i < w; i += 6) {
-    i2 = i / 2;
-    tft.drawRoundRect(cx - i2, cy - i2, i, i, i / 8, tft.color565(i, 0, 0));
-  }
-
-  return micros() - start;
-}
-
-unsigned long testFilledRoundRects() {
-  unsigned long start;
-  int           i, i2,
-                cx = tft.width()  / 2 - 1,
-                cy = tft.height() / 2 - 1;
-
-  tft.fillScreen(TFT_BLACK);
-  start = micros();
-  for (i = min(tft.width(), tft.height()); i > 20; i -= 6) {
-    i2 = i / 2;
-    tft.fillRoundRect(cx - i2, cy - i2, i, i, i / 8, tft.color565(0, i, 0));
-  }
-
-  return micros() - start;
 }
 
 /***************************************************
