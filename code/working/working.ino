@@ -143,7 +143,7 @@ void loop(void) {
   Serial.print(rd);
   Serial.print(" ");
   Serial.print(dd);
-  Serial.print("\t\t\t");
+  Serial.print("\t\t");
   
   drift += (theta+6.17)/20;
 
@@ -153,8 +153,12 @@ void loop(void) {
   bx += bvx;
   by += bvy;
 
-  if(bx > 240 || bx<0){ bvx *= -1;}
-  if(by > 320 || by<0){ bvy *= -1;}
+  if(bx > 240-ballr || bx<ballr){ bvx *= -1;}
+  if(by > 320-ballr || by<ballr){ bvy *= -1;}
+  if(bx > 240-ballr){bx = 240-ballr;}
+  if(bx < ballr){bx = ballr;}
+  if(by > 320-ballr){by = 320-ballr;}
+  if(by < ballr){by = ballr;}
 
   if((ud<ballr || ld<ballr || dd<ballr || rd<ballr) and ctimeout){
     bvx *= -1;
@@ -165,7 +169,7 @@ void loop(void) {
     }
     ctimeout = false;
   }
-  else if (ud > ballr+15 && ld > ballr+15 && dd>ballr+15 && rd>ballr+15){
+  else if (ud > ballr+7 && ld > ballr+7 && dd>ballr+7 && rd>ballr+7){
     ctimeout = true;
   }
   
@@ -173,7 +177,19 @@ void loop(void) {
   bvy *= (1-friction);
   Serial.print(bvx);
   Serial.print(" ");
-  Serial.println(bvy);
+  Serial.print(bvy);
+  Serial.print("\t\t");
+
+  Serial.println(ctimeout);
+  if(not ctimeout and (ud<ballr || ld<ballr || dd<ballr || rd<ballr)){
+    float xway = bx-cx;
+    float yway = by-cy;
+    float mag = sqrt(xway*xway + yway*yway);
+    xway = xway/mag;
+    yway = yway/mag;
+    bvx += 2.5*xway;
+    bvx += 2.5*yway;
+  }
   
   tft.fillCircle(bx,by,ballr, ballcolor);
   tft.fillTriangle(c1x, c1y, c2x, c2y, c3x, c3y, mycolor);
