@@ -90,9 +90,11 @@ float theta = 0;
   int cy = 260;
   int bx = 120;
   int by = 160;
-  int bvx = 3;
-  int bvy = 3;
+  float bvx = 3;
+  float bvy = 3;
+  
   boolean ctimeout = true;
+  float friction = 0.1;
 void loop(void) {
   tft.fillScreen(TFT_BLACK);
   int xa = analogRead(34)/40;
@@ -140,7 +142,8 @@ void loop(void) {
   Serial.print(" ");
   Serial.print(rd);
   Serial.print(" ");
-  Serial.println(dd);
+  Serial.print(dd);
+  Serial.print("\t\t\t");
   
   drift += (theta+6.17)/20;
 
@@ -156,14 +159,21 @@ void loop(void) {
   if((ud<ballr || ld<ballr || dd<ballr || rd<ballr) and ctimeout){
     bvx *= -1;
     bvy *= -1;
+    if(ud<ballr){
+      bvx -= 2.5*accel * cos(drift);
+      bvy += 2.5*accel * sin(drift);
+    }
     ctimeout = false;
   }
   else if (ud > ballr+15 && ld > ballr+15 && dd>ballr+15 && rd>ballr+15){
     ctimeout = true;
   }
   
- 
-  
+  bvx *= (1-friction);
+  bvy *= (1-friction);
+  Serial.print(bvx);
+  Serial.print(" ");
+  Serial.println(bvy);
   
   tft.fillCircle(bx,by,ballr, ballcolor);
   tft.fillTriangle(c1x, c1y, c2x, c2y, c3x, c3y, mycolor);
