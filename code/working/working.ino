@@ -92,6 +92,7 @@ float theta = 0;
   int by = 160;
   int bvx = 3;
   int bvy = 3;
+  boolean ctimeout = true;
 void loop(void) {
   tft.fillScreen(TFT_BLACK);
   int xa = analogRead(34)/40;
@@ -151,6 +152,15 @@ void loop(void) {
 
   if(bx > 240 || bx<0){ bvx *= -1;}
   if(by > 320 || by<0){ bvy *= -1;}
+
+  if((ud<ballr || ld<ballr || dd<ballr || rd<ballr) and ctimeout){
+    bvx *= -1;
+    bvy *= -1;
+    ctimeout = false;
+  }
+  else if (ud > ballr+15 && ld > ballr+15 && dd>ballr+15 && rd>ballr+15){
+    ctimeout = true;
+  }
   
  
   
