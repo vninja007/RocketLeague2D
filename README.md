@@ -1,5 +1,5 @@
-()[https://img.shields.io/badge/build-passing-green]
-https://img.shields.io/badge/touched_grass-no-red
+![](https://img.shields.io/badge/build-passing-green)
+![](https://img.shields.io/badge/touched_grass-no-red)
 
 # Rocket League 2D
 
