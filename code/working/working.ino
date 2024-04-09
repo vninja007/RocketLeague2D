@@ -42,14 +42,13 @@ void setup() {
   while (!Serial);
 
   Serial.println(""); Serial.println("");
-  Serial.println("TFT_eSPI library test!");
 
   tft.init();
 
   tn = micros();
   tft.fillScreen(TFT_BLACK);
 
-  yield(); Serial.println(F("Benchmark                Time (microseconds)"));
+  yield();
 }
 
 
