@@ -1,9 +1,12 @@
 ![](https://img.shields.io/badge/build-passing-green)
 ![](https://img.shields.io/badge/touched_grass-no-red)
+![](https://img.shields.io/badge/gamemode-singeplayer-blue)
 
 # Rocket League 2D
 
 Vrishak's attempt at a popular consumer game, replicated in 2D through microcontrollers and TFTs.
+
+This game relicates a very minimalistic version of turning, moving, ball collisions, friction, and wall collisions. Single player for now, will be multiplayer hopefully soon
 
 # Usage
 
