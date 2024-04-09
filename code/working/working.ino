@@ -11,6 +11,8 @@
  #########################################################################
 */
 
+//Code and implementation by Vrishak Vemuri, using external libraries
+
 
 #include "SPI.h"
 #include "TFT_eSPI.h"
