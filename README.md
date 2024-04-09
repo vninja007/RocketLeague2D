@@ -4,7 +4,7 @@
 
 # Rocket League 2D
 
-Vrishak's attempt at a popular consumer game, replicated in 2D through microcontrollers and TFTs.
+Vrishak's attempt at a popular consumer game, replicated in 2D through microcontrollers and TFTs. This is a quarter 3 project for Robotics 2 finished in ~3 weeks.
 
 This game relicates a very minimalistic version of turning, moving, ball collisions, friction, and wall collisions. Single player for now, will be multiplayer soon.
 
